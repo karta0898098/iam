@@ -42,7 +42,7 @@ const (
 
 	nameLengthMax = 20
 
-	avatarURLLengthMax = 100
+	avatarURLLengthMax = 300
 )
 
 func (srv *identityService) Login(ctx context.Context, account string, password string) (profile *domain.Profile, err error) {
@@ -242,7 +242,7 @@ func (srv *identityService) ValidatePassword(password string, min, max int) bool
 
 // ValidateEmail validate email format
 func (srv *identityService) ValidateEmail(email string) bool {
-	if len(email) < 3 && len(email) > 254 {
+	if len(email) < 3 || len(email) > 254 {
 		return false
 	}
 	return emailRegex.MatchString(email)

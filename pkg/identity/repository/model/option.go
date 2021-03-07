@@ -9,8 +9,8 @@ import (
 // Profile define user information
 type Profile struct {
 	ID            int64                // ID unique mock number
-	Account       string               // Account user login mock account
-	Password      string               // Password user login password
+	Account       string               // Account user login identity account
+	Password      string               // Password user login identity password
 	Nickname      string               // Nickname user nickname
 	FirstName     string               // FirstName user first name
 	LastName      string               // LastName user last name

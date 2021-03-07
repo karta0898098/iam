@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  mysql:
+    image: "mysql/mysql-server:latest"
+    restart: always
+    ports:
+      - "8081:3306"
+    environment:
+      MYSQL_USER: "iam_program"
+      MYSQL_PASSWORD: "ETqdG59zTQ4zTrCV"
+      MYSQL_DATABASE: "iam"
+  redis:
+    image: "redis:latest"
+    ports:
+      - "8082:6379"
+    restart: always
+

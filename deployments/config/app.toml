@@ -10,7 +10,7 @@ debug = true
 host = "127.0.0.1"
 user = "iam_program"
 password = "ETqdG59zTQ4zTrCV"
-port = 3306
+port = 8081
 name = "iam"
 type = "mysql"
 
@@ -19,7 +19,7 @@ debug = true
 host = "127.0.0.1"
 user = "iam_program"
 password = "ETqdG59zTQ4zTrCV"
-port = 3306
+port = 8081
 name = "iam"
 type = "mysql"
 
