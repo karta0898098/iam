@@ -8,6 +8,8 @@ import (
 	"github.com/karta0898098/iam/configs"
 	deliveryHttp "github.com/karta0898098/iam/pkg/delivery/http"
 	"github.com/karta0898098/iam/pkg/identity"
+
+	"github.com/karta0898098/kara/db/rw/db"
 	"github.com/karta0898098/kara/http"
 	"github.com/karta0898098/kara/zlog"
 
@@ -31,9 +33,10 @@ func Run() {
 	app := fx.New(
 		fx.Supply(config),
 		fx.Supply(idUtils),
-		identity.Module,
+		fx.Provide(db.NewConnection),
 		fx.Provide(http.NewEcho),
 		fx.Provide(deliveryHttp.NewHandler),
+		identity.Module,
 		fx.Invoke(zlog.Setup),
 		fx.Invoke(deliveryHttp.SetupRoute),
 		fx.Invoke(http.RunEcho),

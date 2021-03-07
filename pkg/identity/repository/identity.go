@@ -5,6 +5,7 @@ import (
 
 	"github.com/karta0898098/iam/pkg/identity/domain"
 	"github.com/karta0898098/iam/pkg/identity/repository/model"
+	"github.com/karta0898098/kara/db/rw/db"
 
 	"github.com/karta0898098/kara/errors"
 
@@ -28,10 +29,10 @@ type identityRepository struct {
 	writeDB *gorm.DB
 }
 
-func NewIdentityRepository( /*conn *db.Connection*/) IdentityRepository {
+func NewIdentityRepository( conn db.Connection) IdentityRepository {
 	return &identityRepository{
-		// readDB:  conn.ReadDB,
-		// writeDB: conn.WriteDB,
+		readDB:  conn.ReadDB,
+		writeDB: conn.WriteDB,
 	}
 }
 
