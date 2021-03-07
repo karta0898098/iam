@@ -1,0 +1,29 @@
+[log]
+env = "local"
+app_id = "iam"
+debug = true
+level = 0
+
+[database]
+[database.read]
+debug = true
+host = "127.0.0.1"
+user = "iam_program"
+password = "ETqdG59zTQ4zTrCV"
+port = 3306
+name = "iam"
+type = "mysql"
+
+[database.write]
+debug = true
+host = "127.0.0.1"
+user = "iam_program"
+password = "ETqdG59zTQ4zTrCV"
+port = 3306
+name = "iam"
+type = "mysql"
+
+[http]
+mode = "debug"
+port = ":8080"
+dump = true
