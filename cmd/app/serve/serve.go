@@ -9,6 +9,7 @@ import (
 	"github.com/karta0898098/iam/pkg/access"
 	deliveryHttp "github.com/karta0898098/iam/pkg/delivery/http"
 	"github.com/karta0898098/iam/pkg/identity"
+	"github.com/karta0898098/kara/redis"
 
 	"github.com/karta0898098/kara/db/rw/db"
 	"github.com/karta0898098/kara/http"
@@ -36,6 +37,7 @@ func Run() {
 		fx.Supply(idUtils),
 		fx.Provide(db.NewConnection),
 		fx.Provide(http.NewEcho),
+		fx.Provide(redis.NewRedis),
 		fx.Provide(deliveryHttp.NewHandler),
 		identity.Module,
 		access.Module,

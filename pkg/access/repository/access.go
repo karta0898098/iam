@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/go-redis/redis/v8"
 	"github.com/karta0898098/iam/pkg/access/domain"
 	"github.com/karta0898098/iam/pkg/access/repository/model"
 )
@@ -16,12 +17,14 @@ type AccessRepository interface {
 	StoreToken(ctx context.Context, tokenType domain.TokenType, tokenID string, value []byte, ttl time.Duration) (err error)
 }
 
-func NewAccessRepository() AccessRepository{
-	return &accessRepository{}
+func NewAccessRepository(redisClient *redis.Client) AccessRepository {
+	return &accessRepository{
+		redisClient: redisClient,
+	}
 }
 
 type accessRepository struct {
-
+	redisClient *redis.Client
 }
 
 func (repo *accessRepository) CreateUserAccess(ctx context.Context, userID int64, role []domain.Role) (access []*model.Access, err error) {
@@ -35,5 +38,3 @@ func (repo *accessRepository) ListUserAccess(ctx context.Context, userID int64) 
 func (repo *accessRepository) StoreToken(ctx context.Context, tokenType domain.TokenType, tokenID string, value []byte, ttl time.Duration) (err error) {
 	panic("implement me")
 }
-
-

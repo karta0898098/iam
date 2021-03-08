@@ -27,3 +27,6 @@ type = "mysql"
 mode = "debug"
 port = ":8080"
 dump = true
+
+[redis]
+addr = "127.0.0.1:8082"

@@ -3,6 +3,7 @@ package configs
 import (
 	"github.com/karta0898098/kara/db/rw/db"
 	"github.com/karta0898098/kara/http"
+	"github.com/karta0898098/kara/redis"
 	"github.com/karta0898098/kara/zlog"
 
 	"github.com/rs/zerolog/log"
@@ -16,6 +17,7 @@ type Configurations struct {
 	Log      zlog.Config
 	Database db.Config
 	Http     http.Config
+	Redis    redis.Config
 }
 
 // NewConfig read configs and create new instance
