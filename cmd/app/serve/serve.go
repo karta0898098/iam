@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/karta0898098/iam/configs"
+	"github.com/karta0898098/iam/pkg/access"
 	deliveryHttp "github.com/karta0898098/iam/pkg/delivery/http"
 	"github.com/karta0898098/iam/pkg/identity"
 
@@ -37,6 +38,7 @@ func Run() {
 		fx.Provide(http.NewEcho),
 		fx.Provide(deliveryHttp.NewHandler),
 		identity.Module,
+		access.Module,
 		fx.Invoke(zlog.Setup),
 		fx.Invoke(deliveryHttp.SetupRoute),
 		fx.Invoke(http.RunEcho),

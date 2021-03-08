@@ -26,8 +26,8 @@ func (s SuspendStatus) ToString() string {
 
 // Profile define user information
 type Profile struct {
-	ID            int64         // ID unique mock number
-	Account       string        // Account user login mock account
+	ID            int64         // ID unique identity number
+	Account       string        // Account user login identity account
 	Password      string        // Password user login password
 	Nickname      string        // Nickname user nickname
 	FirstName     string        // FirstName user first name
@@ -39,7 +39,7 @@ type Profile struct {
 	SuspendStatus SuspendStatus // SuspendStatus this account is suspend
 }
 
-// IdentityService define mock service
+// IdentityService define identity service
 type IdentityService interface {
 	// Login verify user account
 	Login(ctx context.Context, account string, password string) (profile *Profile, err error)
