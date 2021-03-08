@@ -81,14 +81,11 @@ type Claims struct {
 type Tokens struct {
 	AccessToken  string
 	RefreshToken string
-	TokenType    string
 	ExpireIn     int64
 }
 
 // AccessService define access service manager token and check user role
 type AccessService interface {
-	// AssignUserRole assign user a role
-	AssignUserRole(ctx context.Context, userID int64, role Role) (err error)
 	// CreateAccessTokens create user login or signup token
 	CreateAccessTokens(ctx context.Context, user *identity.Profile) (tokens *Tokens, err error)
 }

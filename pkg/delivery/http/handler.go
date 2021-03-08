@@ -55,7 +55,6 @@ func (h *Handler) LoginEndpoint(c echo.Context) error {
 	response = LoginResponse{
 		AccessToken:  claims.AccessToken,
 		RefreshToken: claims.RefreshToken,
-		TokenType:    claims.TokenType,
 		ExpireIn:     claims.ExpireIn,
 	}
 
