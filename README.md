@@ -18,11 +18,13 @@ P.S 專案底下的 [deployments/environment](https://github.com/karta0898098/ia
 ## Config 
 啟動本服務時會預設載入 ./deployments/config/[app.toml](https://github.com/karta0898098/iam/blob/master/deployments/config/app.toml "link") 的設定檔案。請依真實環境配置
 
-## 專案結構說明
+## 專案說明
 此專案使用三層式設計，並參考了DDD的設計，將服務拆分成聚合層、商業邏輯層以及存儲資料層來方便維護以及開發。</br>
 
 * Identity Module 提供 User 的身份別，註冊登入等相關邏輯。
 * Access Module 提供 User 具備何種角色，以及發放 Token 的管理。
+
+**NOTE: 目前尚未開發完成**
 
 ## License
 IAM source code is available under an MIT [License](https://github.com/karta0898098/iam/blob/master/LICENSE "link").
