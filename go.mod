@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis/v8 v8.6.0
 	github.com/golang/protobuf v1.4.3 // indirect
-	github.com/karta0898098/kara v1.1.30
+	github.com/karta0898098/kara v1.1.31
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/rs/zerolog v1.19.0
 	github.com/spf13/viper v1.7.1

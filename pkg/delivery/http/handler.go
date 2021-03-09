@@ -6,6 +6,9 @@ import (
 
 	access "github.com/karta0898098/iam/pkg/access/domain"
 	identity "github.com/karta0898098/iam/pkg/identity/domain"
+
+	"github.com/karta0898098/kara/errors"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,15 +27,15 @@ func NewHandler(identityService identity.IdentityService, accessService access.A
 func (h *Handler) LoginEndpoint(c echo.Context) error {
 	type (
 		LoginRequest struct {
-			Account  string
-			Password string
+			Account  string `json:"account"`
+			Password string `json:"password"`
 		}
 
 		LoginResponse struct {
-			AccessToken  string
-			RefreshToken string
-			TokenType    string
-			ExpireIn     int64
+			AccessToken  string `json:"accessToken"`
+			RefreshToken string `json:"refreshToken"`
+			TokenType    string `json:"tokenType,omitempty"`
+			ExpireIn     int64  `json:"expireIn"`
 		}
 	)
 	var (
@@ -42,6 +45,11 @@ func (h *Handler) LoginEndpoint(c echo.Context) error {
 	)
 
 	ctx = c.Request().Context()
+
+	if err := c.Bind(&request); err != nil {
+		return errors.ErrInvalidInput.BuildWithError(err)
+	}
+
 	user, err := h.identityService.Login(ctx, request.Account, request.Password)
 	if err != nil {
 		return err
