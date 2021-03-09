@@ -70,7 +70,7 @@ func (srv *accessService) CreateAccessTokens(ctx context.Context, user *identity
 	}
 
 	for i := 0; i < len(access); i++ {
-		claims.Roles = append(claims.Roles, access[i].Roles)
+		claims.Roles = append(claims.Roles, access[i].Role)
 	}
 
 	// create access token

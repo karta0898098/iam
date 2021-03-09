@@ -16,12 +16,23 @@ CREATE TABLE IF NOT EXISTS profiles
     INDEX (`id`, `account`)
 )
     COMMENT 'define identity profile schema';
+
+CREATE TABLE IF NOT EXISTS access
+(
+    user_id    BIGINT(20) UNSIGNED NOT NULL COMMENT 'user identity number',
+    role       TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'user default role',
+    created_at DATETIME            NOT NULL COMMENT 'role create time',
+    PRIMARY KEY (`user_id`),
+    INDEX (`user_id`)
+)
+    COMMENT 'define user access schema';
 -- +goose StatementBegin
 SELECT 'up SQL query';
 -- +goose StatementEnd
 
 -- +goose Down
 DROP TABLE IF EXISTS profiles;
+DROP TABLE IF EXISTS access;
 -- +goose StatementBegin
 SELECT 'down SQL query';
 -- +goose StatementEnd

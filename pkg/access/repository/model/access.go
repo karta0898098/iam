@@ -8,6 +8,10 @@ import (
 
 type Access struct {
 	UserID    int64
-	Roles     domain.Role
+	Role      domain.Role
 	CreatedAt time.Time
+}
+
+func (a *Access) TableName() string {
+	return "access"
 }

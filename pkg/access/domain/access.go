@@ -66,6 +66,17 @@ func (t TokenType) ToString() string {
 	}
 }
 
+func (t TokenType) GetPrefix() string {
+	switch t {
+	case AccessToken:
+		return "access:"
+	case RefreshToken:
+		return "refresh:"
+	default:
+		return "unknown:"
+	}
+}
+
 type Claims struct {
 	UserID        int64         // UserID  unique identity number
 	Account       string        // Account user login mock account
