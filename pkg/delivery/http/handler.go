@@ -50,6 +50,10 @@ func (h *Handler) LoginEndpoint(c echo.Context) error {
 		return errors.ErrInvalidInput.BuildWithError(err)
 	}
 
+	if err := c.Validate(&request);err != nil{
+		return errors.ErrInvalidInput.BuildWithError(err)
+	}
+
 	user, err := h.identityService.Login(ctx, request.Account, request.Password)
 	if err != nil {
 		return err
@@ -74,6 +78,7 @@ func (h *Handler) SignupEndpoint(c echo.Context) error {
 		SignupRequest struct {
 			Account  string `json:"account"`
 			Password string `json:"password"`
+			Nickname string `json:"nickname"`
 		}
 
 		SignupResponse struct {
@@ -92,6 +97,10 @@ func (h *Handler) SignupEndpoint(c echo.Context) error {
 	ctx = c.Request().Context()
 
 	if err := c.Bind(&request); err != nil {
+		return errors.ErrInvalidInput.BuildWithError(err)
+	}
+
+	if err := c.Validate(&request);err != nil{
 		return errors.ErrInvalidInput.BuildWithError(err)
 	}
 
