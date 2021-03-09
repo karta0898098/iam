@@ -68,3 +68,48 @@ func (h *Handler) LoginEndpoint(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func (h *Handler) SignupEndpoint(c echo.Context) error {
+	type (
+		SignupRequest struct {
+			Account  string `json:"account"`
+			Password string `json:"password"`
+		}
+
+		SignupResponse struct {
+			AccessToken  string `json:"accessToken"`
+			RefreshToken string `json:"refreshToken"`
+			TokenType    string `json:"tokenType,omitempty"`
+			ExpireIn     int64  `json:"expireIn"`
+		}
+	)
+	var (
+		ctx      context.Context
+		request  SignupRequest
+		response SignupResponse
+	)
+
+	ctx = c.Request().Context()
+
+	if err := c.Bind(&request); err != nil {
+		return errors.ErrInvalidInput.BuildWithError(err)
+	}
+
+	profile, err := h.identityService.Signup(ctx, request.Account, request.Password, nil)
+	if err != nil {
+		return err
+	}
+
+	claims, err := h.accessService.CreateAccessTokens(ctx, profile)
+	if err != nil {
+		return err
+	}
+
+	response = SignupResponse{
+		AccessToken:  claims.AccessToken,
+		RefreshToken: claims.RefreshToken,
+		ExpireIn:     claims.ExpireIn,
+	}
+
+	return c.JSON(http.StatusOK, response)
+}

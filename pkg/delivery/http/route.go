@@ -15,5 +15,6 @@ func SetupRoute(route *echo.Echo, handler *Handler) {
 	{
 		v1 := api.Group("/v1")
 		v1.POST("/login", handler.LoginEndpoint)
+		v1.POST("/signup", handler.SignupEndpoint)
 	}
 }

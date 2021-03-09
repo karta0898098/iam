@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS profiles
 (
     id             BIGINT(20) UNSIGNED NOT NULL COMMENT 'unique identity number',
     account        VARCHAR(16)         NOT NULL COMMENT 'user login identity account',
-    password       VARCHAR(16)         NOT NULL COMMENT 'user login identity password',
+    password       VARCHAR(64)         NOT NULL COMMENT 'user login identity password',
     nickname       VARCHAR(20)                  DEFAULT '' COMMENT 'user nickname',
     first_name     VARCHAR(20)                  DEFAULT '' COMMENT 'user first name',
     last_name      VARCHAR(20)                  DEFAULT '' COMMENT 'user last name',
