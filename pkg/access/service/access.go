@@ -24,16 +24,26 @@ const (
 	refreshTokenExpire = 14 * 24 * time.Hour
 )
 
+type idUtilsAdapter interface {
+	Generate() snowflake.ID
+}
+
 type accessService struct {
-	idUtils *snowflake.Node
+	idUtils idUtilsAdapter
 	repo    repository.AccessRepository
+
+	tokenGenerator func(tokenID string, exp int64) (token string)
 }
 
 func NewAccessService(idUtils *snowflake.Node, repo repository.AccessRepository) domain.AccessService {
-	return &accessService{
+	srv := &accessService{
 		idUtils: idUtils,
 		repo:    repo,
 	}
+
+	srv.tokenGenerator = srv.CreateJwtToken
+
+	return srv
 }
 
 func (srv *accessService) CreateAccessTokens(ctx context.Context, user *identity.Profile) (tokens *domain.Tokens, err error) {
@@ -77,7 +87,7 @@ func (srv *accessService) CreateAccessTokens(ctx context.Context, user *identity
 	accessTokenExpireTime := time.Now().UTC().Add(jwtAccessTokenExpire).Unix()
 	accessTokenID := srv.idUtils.Generate().Base58()
 	accessClaimsValue, _ := json.Marshal(&claims)
-	accessToken := srv.CreateJwtToken(accessTokenID, accessTokenExpireTime)
+	accessToken := srv.tokenGenerator(accessTokenID, accessTokenExpireTime)
 	err = srv.repo.StoreToken(ctx, domain.AccessToken, accessTokenID, accessClaimsValue, jwtAccessTokenExpire)
 	if err != nil {
 		return nil, err
