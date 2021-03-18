@@ -110,6 +110,12 @@ func (srv *accessService) CreateAccessTokens(ctx context.Context, user *identity
 	return tokens, nil
 }
 
+func (srv *accessService) GetClaims(token string) (claims *domain.Claims, err error) {
+
+
+	return nil, err
+}
+
 func (srv *accessService) CreateJwtToken(tokenID string, exp int64) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

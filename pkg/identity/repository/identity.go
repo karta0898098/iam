@@ -29,7 +29,7 @@ type identityRepository struct {
 	writeDB *gorm.DB
 }
 
-func NewIdentityRepository( conn db.Connection) IdentityRepository {
+func NewIdentityRepository(conn db.Connection) IdentityRepository {
 	return &identityRepository{
 		readDB:  conn.ReadDB,
 		writeDB: conn.WriteDB,
@@ -53,9 +53,17 @@ func (repo *identityRepository) GetProfile(ctx context.Context, opts *model.GetP
 	var (
 		user model.Profile
 	)
+
+	if opts == nil {
+		return nil, errors.ErrInternal.Build("input query option is nil")
+	}
+
 	err = repo.readDB.
 		WithContext(ctx).
 		Model(&user).
+		Scopes(
+			opts.Query,
+		).
 		First(&user).
 		Error
 	if err != nil {
@@ -75,9 +83,9 @@ func (repo *identityRepository) UpdateProfile(ctx context.Context, id int64, opt
 
 	err = repo.writeDB.
 		WithContext(ctx).
-		Model(&user).
+		Model(user).
 		Where("id = ?", id).
-		Updates(opts).
+		Updates(opts.ToMap()).
 		Error
 	if err != nil {
 		return errors.ErrInternal.Build("reason : db occur error %v", err)
