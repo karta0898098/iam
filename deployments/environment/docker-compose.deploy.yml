@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  mysql:
+    image: "mysql/mysql-server:latest"
+    restart: always
+    ports:
+      - "8081:3306"
+    environment:
+      MYSQL_USER: "iam_program"
+      MYSQL_PASSWORD: "ETqdG59zTQ4zTrCV"
+      MYSQL_DATABASE: "iam"
+    networks:
+      - iam
+  redis:
+    image: "redis:latest"
+    ports:
+      - "8082:6379"
+    restart: always
+    networks:
+      - iam
+  app:
+    image: "iam:latest"
+    ports:
+      - "8080:8080"
+    networks:
+      - iam
+    volumes:
+      - ../config:/app/deployments/config
+    environment:
+      CONFIG_NAME: app.deploy
+networks:
+  iam:
+    name: iam
