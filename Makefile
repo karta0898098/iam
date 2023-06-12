@@ -34,3 +34,6 @@ DBNAME=iam
 DBHOST=127.0.0.1:8081
 migrate:
 	goose -dir ./deployments/migrate/ -v mysql "$(DBUSER):$(DBPASSWORD)@tcp($(DBHOST))/$(DBNAME)?charset=utf8&parseTime=True" up
+
+mocks:
+	mockery --all --with-expecter --dir ./pkg/app/identity  --output ./pkg/app/identity/mocks

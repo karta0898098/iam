@@ -1,23 +1,19 @@
 package configs
 
 import (
-	"github.com/karta0898098/kara/db/rw/db"
-	"github.com/karta0898098/kara/http"
-	"github.com/karta0898098/kara/redis"
-	"github.com/karta0898098/kara/zlog"
-
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/viper"
 
-	"go.uber.org/fx"
+	"github.com/karta0898098/iam/pkg/db"
+	"github.com/karta0898098/iam/pkg/http"
+	"github.com/karta0898098/iam/pkg/logging"
 )
 
+// Configurations define this application need configs
 type Configurations struct {
-	fx.Out
-	Log      zlog.Config
-	Database db.Config
-	Http     http.Config
-	Redis    redis.Config
+	Database db.Config      `mapstructure:"database"`
+	HTTP     http.Config    `mapstructure:"http"`
+	Log      logging.Config `mapstructure:"log"`
 }
 
 // NewConfig read configs and create new instance

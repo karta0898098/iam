@@ -1,14 +1,14 @@
 version: "3.9"
 services:
-  mysql:
-    image: "mysql/mysql-server:latest"
+  postgres:
+    image: "postgres:latest"
     restart: always
     ports:
-      - "8081:3306"
+      - "8081:5432"
     environment:
-      MYSQL_USER: "iam_program"
-      MYSQL_PASSWORD: "ETqdG59zTQ4zTrCV"
-      MYSQL_DATABASE: "iam"
+      POSTGRES_USER: "iam_program"
+      POSTGRES_PASSWORD: "ETqdG59zTQ4zTrCV"
+      POSTGRES_DB: "iam"
   redis:
     image: "redis:latest"
     ports:
