@@ -7,7 +7,7 @@ import (
 	"github.com/google/wire"
 	"github.com/rs/zerolog"
 
-	"github.com/karta0898098/iam/configs"
+	"github.com/karta0898098/iam/cmd/identity/configs"
 	"github.com/karta0898098/iam/pkg/app/identity"
 	"github.com/karta0898098/iam/pkg/db"
 )

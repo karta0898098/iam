@@ -7,12 +7,13 @@
 package main
 
 import (
-	"github.com/karta0898098/iam/configs"
+	"github.com/rs/zerolog"
+
+	"github.com/karta0898098/iam/cmd/identity/configs"
 	"github.com/karta0898098/iam/pkg/app/identity/endpoints"
 	"github.com/karta0898098/iam/pkg/app/identity/repository"
 	"github.com/karta0898098/iam/pkg/app/identity/service"
 	"github.com/karta0898098/iam/pkg/db"
-	"github.com/rs/zerolog"
 )
 
 // Injectors from wire.go:

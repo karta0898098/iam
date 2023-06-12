@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 
-	"github.com/karta0898098/iam/configs"
+	"github.com/karta0898098/iam/cmd/identity/configs"
 	"github.com/karta0898098/iam/pkg/app/identity/endpoints"
 	transportshttp "github.com/karta0898098/iam/pkg/app/identity/transports/http"
 	"github.com/karta0898098/iam/pkg/db"

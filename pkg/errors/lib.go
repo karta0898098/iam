@@ -116,9 +116,9 @@ func (e *Exception) Error() string {
 }
 
 // WithDetails set detail error message
-func (e *Exception) WithDetails(details Detail) *Exception {
+func (e *Exception) WithDetails(details ...Detail) *Exception {
 	newErr := *e
-	newErr.Details = append(newErr.Details, details)
+	newErr.Details = append(newErr.Details, details...)
 	return &newErr
 }
 

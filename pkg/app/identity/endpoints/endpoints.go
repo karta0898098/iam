@@ -4,6 +4,10 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	translations "github.com/go-playground/validator/v10/translations/en"
 
 	"github.com/karta0898098/iam/pkg/app/identity/entity"
 	"github.com/karta0898098/iam/pkg/app/identity/service"
@@ -17,12 +21,25 @@ type Endpoints struct {
 
 // New endpoints
 func New(svc service.IdentityService) (ep Endpoints) {
-	signinEndpoint := MakeSigninEndpoint(svc)
-	signinEndpoint = LoggingMiddleware("Signin")(signinEndpoint)
+	v := validator.New()
+	eng := en.New()
+	uni := ut.New(eng, eng)
+	trans, _ := uni.GetTranslator("en")
+
+	_ = translations.RegisterDefaultTranslations(v, trans)
+
+	signinEndpoint := MakeSigninEndpoint(svc, v, trans)
+	signinEndpoint = endpoint.Chain(
+		LoggingMiddleware("Signin"),
+		ValidateMiddleware(v, trans),
+	)(signinEndpoint)
 	ep.SigninEndpoint = signinEndpoint
 
 	signupEndpoint := MakeSignupEndpoint(svc)
-	signupEndpoint = LoggingMiddleware("Signup")(signupEndpoint)
+	signupEndpoint = endpoint.Chain(
+		LoggingMiddleware("Signup"),
+		ValidateMiddleware(v, trans),
+	)(signupEndpoint)
 	ep.SignupEndpoint = signupEndpoint
 
 	return ep
@@ -30,8 +47,8 @@ func New(svc service.IdentityService) (ep Endpoints) {
 
 // SigninRequest define signin request
 type SigninRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 
 	IPAddress   string        `json:"ip_address"`
 	Platform    string        `json:"platform"`
@@ -47,7 +64,7 @@ type SigninResponse struct {
 }
 
 // MakeSigninEndpoint make signin endpoint
-func MakeSigninEndpoint(svc service.IdentityService) endpoint.Endpoint {
+func MakeSigninEndpoint(svc service.IdentityService, validate *validator.Validate, trans ut.Translator) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(SigninRequest)
 
