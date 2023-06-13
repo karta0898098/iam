@@ -37,3 +37,10 @@ migrate:
 
 mocks:
 	mockery --all --with-expecter --dir ./pkg/app/identity  --output ./pkg/app/identity/mocks
+
+proto:
+	$(foreach dir, protoc --go_out=. \
+	--go_opt=paths=source_relative \
+	--go-grpc_out=. \
+	--go-grpc_opt=paths=source_relative $(shell find . -name *.proto),
+	$(dir))

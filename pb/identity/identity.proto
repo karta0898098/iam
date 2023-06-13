@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option go_package = ".;proto";
+
+
+service IdentityService{
+  rpc Signin(SigninReq) returns (SigninResp);
+  rpc Signup(SignupReq) returns (SignupResp);
+}
+
+
+message SigninReq{
+
+}
+
+message SigninResp{
+
+}
+
+message SignupReq{
+
+}
+
+message SignupResp{
+
+}
