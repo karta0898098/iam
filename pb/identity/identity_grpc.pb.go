@@ -53,15 +53,14 @@ func (c *identityServiceClient) Signup(ctx context.Context, in *SignupReq, opts 
 }
 
 // IdentityServiceServer is the server API for IdentityService service.
-// All implementations must embed UnimplementedIdentityServiceServer
+// All implementations should embed UnimplementedIdentityServiceServer
 // for forward compatibility
 type IdentityServiceServer interface {
 	Signin(context.Context, *SigninReq) (*SigninResp, error)
 	Signup(context.Context, *SignupReq) (*SignupResp, error)
-	mustEmbedUnimplementedIdentityServiceServer()
 }
 
-// UnimplementedIdentityServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedIdentityServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedIdentityServiceServer struct {
 }
 
@@ -71,7 +70,6 @@ func (UnimplementedIdentityServiceServer) Signin(context.Context, *SigninReq) (*
 func (UnimplementedIdentityServiceServer) Signup(context.Context, *SignupReq) (*SignupResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Signup not implemented")
 }
-func (UnimplementedIdentityServiceServer) mustEmbedUnimplementedIdentityServiceServer() {}
 
 // UnsafeIdentityServiceServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to IdentityServiceServer will

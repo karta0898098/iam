@@ -68,7 +68,7 @@ func MakeSigninEndpoint(svc service.IdentityService, validate *validator.Validat
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
 		req := request.(SigninRequest)
 
-		_, err = svc.Signin(ctx, req.Username, req.Password, &service.SigninOption{
+		identity, err := svc.Signin(ctx, req.Username, req.Password, &service.SigninOption{
 			IPAddress:   req.IPAddress,
 			Platform:    req.Platform,
 			Device:      req.Device,
@@ -79,8 +79,8 @@ func MakeSigninEndpoint(svc service.IdentityService, validate *validator.Validat
 		}
 
 		return &SigninResponse{
-			// AccessToken:  identity.NewAccessToken(),
-			// RefreshToken: identity.NewRefreshToken(),
+			AccessToken:  identity.NewAccessToken(),
+			RefreshToken: identity.NewRefreshToken(),
 		}, nil
 	}
 }
@@ -94,6 +94,7 @@ type SignupRequest struct {
 	LastName  string        `json:"last_name,omitempty"`
 	Email     string        `json:"email,omitempty"`
 	Platform  string        `json:"platform,omitempty"`
+	IPAddress string        `json:"ip_address,omitempty"`
 	Device    entity.Device `json:"device"`
 }
 
@@ -114,7 +115,7 @@ func MakeSignupEndpoint(svc service.IdentityService) endpoint.Endpoint {
 			FirstName: req.FirstName,
 			LastName:  req.LastName,
 			Email:     req.Email,
-			IPAddress: "", // TODO
+			IPAddress: req.IPAddress,
 			Platform:  req.Platform,
 			Device:    req.Device,
 		})

@@ -21,9 +21,9 @@ type Session struct {
 }
 
 type Device struct {
-	Model      string
-	DeviceName string
-	OSVersion  string
+	Model     string
+	Name      string
+	OSVersion string
 }
 
 type NewSessionOption func(p *Session)

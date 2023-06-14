@@ -8,7 +8,7 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/karta0898098/kara/errors"
+	"github.com/karta0898098/iam/pkg/errors"
 )
 
 var (
@@ -34,8 +34,8 @@ const (
 	UserAccountStatusActive
 	// UserAccountStatusSuspend user has been suspended by admin
 	UserAccountStatusSuspend
-	// USerAccountStatusNotConfirmed user not confirmed
-	USerAccountStatusNotConfirmed
+	// UserAccountStatusNotConfirmed user not confirmed
+	UserAccountStatusNotConfirmed
 )
 
 // ToString ..
@@ -45,7 +45,7 @@ func (s UserAccountStatus) ToString() string {
 		return "normal"
 	case UserAccountStatusSuspend:
 		return "active"
-	case USerAccountStatusNotConfirmed:
+	case UserAccountStatusNotConfirmed:
 		return "notConfirmed"
 	default:
 		return "unknown"
@@ -111,7 +111,7 @@ func (p *User) ValidatePasswordFormat(password string) bool {
 // password need alphabet
 // password don't have any space or special symbol
 func (p *User) ValidatePassword(password string) bool {
-	return p.Password != encryptPassword(password)
+	return p.Password == encryptPassword(password)
 }
 
 func encryptPassword(password string) string {
@@ -125,7 +125,7 @@ func encryptPassword(password string) string {
 }
 
 func (p *User) IsActive() bool {
-	return p.Status != UserAccountStatusActive
+	return p.Status == UserAccountStatusActive
 }
 
 type NewUserOption func(p *User) error
@@ -139,7 +139,7 @@ func NewUser(
 ) (*User, error) {
 	// check signup params
 	if len(Username) < UsernameLengthMin || len(Username) > UsernameLengthMax {
-		return nil, errors.ErrInvalidInput.Build("input username length not equal rule")
+		return nil, errors.Wrap(errors.ErrInvalidInput, "input username length not equal rule")
 	}
 
 	now := time.Now()
@@ -149,7 +149,7 @@ func NewUser(
 		Password:  Password,
 		CreatedAt: now,
 		UpdatedAt: now,
-		Status:    USerAccountStatusNotConfirmed,
+		Status:    UserAccountStatusActive,
 	}
 
 	for _, opt := range opts {
@@ -160,7 +160,7 @@ func NewUser(
 	}
 
 	if !p.ValidatePasswordFormat(Password) {
-		return nil, errors.ErrInvalidInput.Build("input password format is not correct")
+		return nil, errors.Wrap(errors.ErrInvalidInput, "input password format is not correct")
 	}
 
 	p.Password = encryptPassword(Password)
@@ -172,7 +172,8 @@ func NewUser(
 func WithNickname(nickname string) NewUserOption {
 	return func(p *User) error {
 		if len(nickname) > NameLengthMax {
-			return errors.ErrInvalidInput.Build("input nickname length too many")
+			// return errors.ErrInvalidInput.Build("input nickname length too many")
+			return errors.Wrap(errors.ErrInvalidInput, "input nickname length too many")
 		}
 		p.Nickname = nickname
 		return nil
@@ -183,11 +184,11 @@ func WithNickname(nickname string) NewUserOption {
 func WithEmail(email string) NewUserOption {
 	return func(p *User) error {
 		if len(email) < 3 || len(email) > 254 {
-			return errors.ErrInvalidInput.Build("input email length is invalid")
+			return errors.Wrap(errors.ErrInvalidInput, "input email length is invalid")
 		}
 
 		if !emailRegex.MatchString(email) {
-			return errors.ErrInvalidInput.Build("input email not match regex")
+			return errors.Wrap(errors.ErrInvalidInput, "input email not match regex")
 		}
 
 		// Normalise email format

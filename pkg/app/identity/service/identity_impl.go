@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
-	"github.com/karta0898098/kara/errors"
 	"github.com/rs/xid"
 
 	"github.com/karta0898098/iam/pkg/app/identity/entity"
 	"github.com/karta0898098/iam/pkg/app/identity/repository"
+	"github.com/karta0898098/iam/pkg/errors"
 )
 
 var _ IdentityService = &Impl{}
@@ -54,38 +54,44 @@ func (srv *Impl) Signin(
 	password string,
 	opt *SigninOption,
 ) (identity *entity.Identity, err error) {
-	// user, err := srv.repo.FindUserByUsername(ctx, username)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// if !user.ValidatePassword(password) {
-	// 	return nil, errors.ErrUnauthorized
-	// }
-	//
-	// if !user.IsActive() {
-	// 	return nil, errors.ErrUnauthorized
-	// }
-	//
-	// session := entity.NewSession(
-	// 	xid.New().String(),
-	// 	user.ID,
-	// 	opt.IPAddress,
-	// 	opt.Platform,
-	// 	entity.WithDevice(opt.Device),
-	// )
-	//
-	// err = srv.repo.StoreSession(ctx, session)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	//
-	// return &entity.Identity{
-	// 	User:    user,
-	// 	Session: session,
-	// }, nil
+	user, err := srv.repo.FindUserByUsername(ctx, username)
+	if err != nil {
+		return nil, err
+	}
 
-	return &entity.Identity{}, nil
+	if !user.ValidatePassword(password) {
+		return nil, errors.Wrapf(
+			errors.ErrUnauthorized,
+			"user=%s validate password failed",
+			user.ID,
+		)
+	}
+
+	if !user.IsActive() {
+		return nil, errors.Wrapf(
+			errors.ErrUnauthorized,
+			"user=%s is not active status=%v",
+			user.ID, user.Status,
+		)
+	}
+
+	session := entity.NewSession(
+		xid.New().String(),
+		user.ID,
+		opt.IPAddress,
+		opt.Platform,
+		entity.WithDevice(opt.Device),
+	)
+
+	err = srv.repo.StoreSession(ctx, session)
+	if err != nil {
+		return nil, err
+	}
+
+	return &entity.Identity{
+		User:    user,
+		Session: session,
+	}, nil
 }
 
 func (srv *Impl) Signup(
@@ -109,12 +115,18 @@ func (srv *Impl) Signup(
 
 	// check user already exist or not
 	user, err := srv.repo.FindUserByUsername(ctx, username)
-	if !errors.Is(errors.ErrResourceNotFound, err) {
-		return nil, err
+	if err != nil {
+		if !errors.Is(errors.ErrResourceNotFound, err) {
+			return nil, err
+		}
 	}
 
 	if user != nil {
-		return nil, errors.ErrConflict
+		return nil, errors.Wrapf(
+			errors.ErrConflict,
+			"username=%v already exist",
+			username,
+		)
 	}
 
 	err = srv.repo.StoreUser(ctx, newUser)
@@ -125,7 +137,7 @@ func (srv *Impl) Signup(
 	// create session to record
 	session := entity.NewSession(
 		xid.New().String(),
-		user.ID,
+		newUser.ID,
 		opt.IPAddress,
 		opt.Platform,
 		entity.WithDevice(opt.Device),

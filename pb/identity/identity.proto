@@ -8,19 +8,41 @@ service IdentityService{
   rpc Signup(SignupReq) returns (SignupResp);
 }
 
+message Device{
+  string Model = 1;
+  string Name = 2;
+  string OSVersion = 3;
+}
+
 
 message SigninReq{
-
+  string Username = 1;
+  string Password = 2;
+  string IPAddress = 3;
+  Device Device = 4;
+  string IdpProvider = 5;
 }
 
 message SigninResp{
-
+  string AccessToken = 1;
+  string RefreshToken = 2;
+  string  IDToken = 3;
 }
 
 message SignupReq{
-
+  string Username = 1;
+  string Password = 2;
+  string Nickname = 3;
+  string FirstName = 4;
+  string LastName = 5;
+  string Email = 6;
+  string IPAddress = 7;
+  string Platform = 8;
+  Device Device = 9;
 }
 
 message SignupResp{
-
+  string AccessToken = 1;
+  string RefreshToken = 2;
+  string  IDToken = 3;
 }
