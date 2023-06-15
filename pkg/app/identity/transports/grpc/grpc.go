@@ -5,10 +5,9 @@ import (
 
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 
+	pb "github.com/karta0898098/iam/pb/identity"
 	"github.com/karta0898098/iam/pkg/app/identity/endpoints"
 	"github.com/karta0898098/iam/pkg/app/identity/entity"
-
-	pb "github.com/karta0898098/iam/pb/identity"
 )
 
 type grpcServer struct {
@@ -62,7 +61,7 @@ func MakeGRPCServer(endpoints endpoints.Endpoints) (req pb.IdentityServiceServer
 func decodeGRPCSigninRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
 	req := grpcReq.(*pb.SigninReq)
 
-	return endpoints.SigninRequest{
+	return &endpoints.SigninRequest{
 		Username:  req.Username,
 		Password:  req.Password,
 		IPAddress: req.IPAddress,
@@ -85,12 +84,38 @@ func encodeGRPCSigninResponse(_ context.Context, grpcReply interface{}) (res int
 	}, nil
 }
 
-// decodeGRPCTicRequest is a transport/grpc.DecodeRequestFunc that converts a
+// encodeGRPCSigninRequest is a transport/grpc.EncodeRequestFunc that converts a
+// user-domain Signin request to a gRPC Signin request. Primarily useful in a client.
+func encodeGRPCSigninRequest(_ context.Context, request interface{}) (interface{}, error) {
+	req := request.(*endpoints.SigninRequest)
+	return &pb.SigninReq{
+		Username:  req.Username,
+		Password:  req.Password,
+		IPAddress: req.IPAddress,
+		Device: &pb.Device{
+			Model:     req.Device.Model,
+			Name:      req.Device.Name,
+			OSVersion: req.Device.OSVersion,
+		},
+		IdpProvider: req.IdpProvider,
+	}, nil
+}
+
+func decodeGRPCSigninResponse(ctx context.Context, grpcReply interface{}) (response interface{}, err error) {
+	reply := grpcReply.(*pb.SigninResp)
+	return &endpoints.SigninResponse{
+		IDToken:      reply.IDToken,
+		AccessToken:  reply.AccessToken,
+		RefreshToken: reply.RefreshToken,
+	}, nil
+}
+
+// decodeGRPCSignupRequest is a transport/grpc.DecodeRequestFunc that converts a
 // gRPC request to a user-domain request. Primarily useful in a server.
 func decodeGRPCSignupRequest(ctx context.Context, grpcReq interface{}) (interface{}, error) {
 	req := grpcReq.(*pb.SignupReq)
 
-	return endpoints.SignupRequest{
+	return &endpoints.SignupRequest{
 		Username:  req.Username,
 		Password:  req.Password,
 		Nickname:  req.Nickname,
@@ -107,7 +132,7 @@ func decodeGRPCSignupRequest(ctx context.Context, grpcReq interface{}) (interfac
 	}, nil
 }
 
-// encodeGRPCTicResponse is a transport/grpc.EncodeResponseFunc that converts a
+// encodeGRPCSignupResponse is a transport/grpc.EncodeResponseFunc that converts a
 // user-domain response to a gRPC reply. Primarily useful in a server.
 func encodeGRPCSignupResponse(_ context.Context, grpcReply interface{}) (res interface{}, err error) {
 	reply := grpcReply.(*endpoints.SignupResponse)
@@ -115,5 +140,33 @@ func encodeGRPCSignupResponse(_ context.Context, grpcReply interface{}) (res int
 		AccessToken:  reply.AccessToken,
 		RefreshToken: reply.RefreshToken,
 		IDToken:      reply.IDToken,
+	}, nil
+}
+
+// encodeGRPCSignupRequest is a transport/grpc.EncodeRequestFunc that converts a
+// user-domain Signup request to a gRPC Signup request. Primarily useful in a client.
+func encodeGRPCSignupRequest(ctx context.Context, request interface{}) (interface{}, error) {
+	req := request.(*endpoints.SigninRequest)
+	return &pb.SigninReq{
+		Username:  req.Username,
+		Password:  req.Password,
+		IPAddress: req.IPAddress,
+		Device: &pb.Device{
+			Model:     req.Device.Model,
+			Name:      req.Device.Name,
+			OSVersion: req.Device.OSVersion,
+		},
+		IdpProvider: req.IdpProvider,
+	}, nil
+}
+
+// decodeGRPCSignupResponse is a transport/grpc.DecodeResponseFunc that converts a
+// gRPC Signup reply to a user-domain Sum response. Primarily useful in a client.
+func decodeGRPCSignupResponse(ctx context.Context, grpcReply interface{}) (response interface{}, err error) {
+	reply := grpcReply.(*pb.SignupResp)
+	return &endpoints.SignupResponse{
+		IDToken:      reply.IDToken,
+		AccessToken:  reply.AccessToken,
+		RefreshToken: reply.RefreshToken,
 	}, nil
 }

@@ -57,7 +57,6 @@ func main() {
 
 	// setup default logger
 	logger := logging.Setup(config.Log)
-	logger.Printf("call")
 
 	// init database
 	dbConn, err := db.NewConnection(config.Database)

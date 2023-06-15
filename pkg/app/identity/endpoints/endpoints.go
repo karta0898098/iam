@@ -28,7 +28,7 @@ func New(svc service.IdentityService) (ep Endpoints) {
 
 	_ = translations.RegisterDefaultTranslations(v, trans)
 
-	signinEndpoint := MakeSigninEndpoint(svc, v, trans)
+	signinEndpoint := MakeSigninEndpoint(svc)
 	signinEndpoint = endpoint.Chain(
 		LoggingMiddleware("Signin"),
 		ValidateMiddleware(v, trans),
@@ -64,9 +64,9 @@ type SigninResponse struct {
 }
 
 // MakeSigninEndpoint make signin endpoint
-func MakeSigninEndpoint(svc service.IdentityService, validate *validator.Validate, trans ut.Translator) endpoint.Endpoint {
+func MakeSigninEndpoint(svc service.IdentityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(SigninRequest)
+		req := request.(*SigninRequest)
 
 		identity, err := svc.Signin(ctx, req.Username, req.Password, &service.SigninOption{
 			IPAddress:   req.IPAddress,
@@ -109,7 +109,7 @@ type SignupResponse struct {
 // MakeSignupEndpoint make signup endpoint
 func MakeSignupEndpoint(svc service.IdentityService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		req := request.(SignupRequest)
+		req := request.(*SignupRequest)
 
 		identity, err := svc.Signup(ctx, req.Username, req.Password, &service.SignupOption{
 			Nickname:  req.Nickname,
