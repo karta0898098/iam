@@ -8,7 +8,6 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	translations "github.com/go-playground/validator/v10/translations/en"
-	"github.com/rs/zerolog/log"
 
 	"github.com/karta0898098/iam/pkg/app/identity/entity"
 	"github.com/karta0898098/iam/pkg/app/identity/service"
@@ -80,6 +79,7 @@ func MakeSigninEndpoint(svc service.IdentityService, validate *validator.Validat
 		}
 
 		return &SigninResponse{
+			IDToken:      "", // TODO implement
 			AccessToken:  identity.NewAccessToken(),
 			RefreshToken: identity.NewRefreshToken(),
 		}, nil
@@ -124,10 +124,8 @@ func MakeSignupEndpoint(svc service.IdentityService) endpoint.Endpoint {
 			return nil, err
 		}
 
-		logger := log.Ctx(ctx)
-		logger.Info().Interface("resp", identity).Msgf("dump response")
-
 		return &SignupResponse{
+			IDToken:      "", // TODO implement
 			AccessToken:  identity.NewAccessToken(),
 			RefreshToken: identity.NewRefreshToken(),
 		}, nil
