@@ -1,32 +1,19 @@
 [log]
 env = "local"
-app_id = "iam"
-debug = true
+app = "iam"
+debug = false
 level = 0
 
 [database]
-[database.read]
-debug = true
-host = "mysql"
+[database.conn]
+debug = false
+host = "127.0.0.1"
 user = "iam_program"
 password = "ETqdG59zTQ4zTrCV"
-port = 3306
+port = 8081
 name = "iam"
-type = "mysql"
-
-[database.write]
-debug = true
-host = "mysql"
-user = "iam_program"
-password = "ETqdG59zTQ4zTrCV"
-port = 3306
-name = "iam"
-type = "mysql"
+type = "postgres"
 
 [http]
-mode = "debug"
+mode = "release"
 port = ":8080"
-dump = false
-
-[redis]
-addr = "redis:6379"

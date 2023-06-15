@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	SigninKey = ""
+	SigninKey = "WfAtSGjzzEw8JeL5GZjs99QLzV5bMdxy"
 )
 
 type Session struct {

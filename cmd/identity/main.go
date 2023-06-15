@@ -20,6 +20,7 @@ import (
 	transportgrpc "github.com/karta0898098/iam/pkg/app/identity/transports/grpc"
 	transportshttp "github.com/karta0898098/iam/pkg/app/identity/transports/http"
 	"github.com/karta0898098/iam/pkg/db"
+	pkggrpc "github.com/karta0898098/iam/pkg/grpc"
 	"github.com/karta0898098/iam/pkg/http"
 	"github.com/karta0898098/iam/pkg/http/middleware"
 	"github.com/karta0898098/iam/pkg/logging"
@@ -71,8 +72,6 @@ func main() {
 	app := NewApp(logger, config, dbConn)
 	app.httpServer.Pre(middleware.NewLoggerMiddleware(logger))
 	app.httpServer.Use(middleware.NewLoggingMiddleware())
-	app.httpServer.Use(middleware.NewErrorHandlingMiddleware())
-	app.httpServer.Use(middleware.RecordErrorMiddleware())
 	app.MakeRouter()
 
 	wg := &sync.WaitGroup{}
@@ -140,7 +139,12 @@ func (app *Application) startGRPCServer(ctx context.Context, wg *sync.WaitGroup)
 		app.logger.Panic().Err(err).Msgf("failed to listen on prot=%v", port)
 	}
 
-	server = grpc.NewServer(grpc.UnaryInterceptor(kitgrpc.Interceptor))
+	server = grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			kitgrpc.Interceptor,
+			pkggrpc.UnaryServerLoggerInterceptor(app.logger),
+		),
+	)
 	pb.RegisterIdentityServiceServer(server, transportgrpc.MakeGRPCServer(app.endpoints))
 	reflection.Register(server)
 

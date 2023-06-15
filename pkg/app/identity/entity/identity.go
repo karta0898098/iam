@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -39,7 +40,10 @@ func newSignedToken(sessionID, userID string, now time.Time, expiresAt time.Time
 		ID:        sessionID,
 	})
 
-	accessToken, _ := token.SignedString(SigninKey)
+	accessToken, err := token.SignedString([]byte(SigninKey))
+	if err != nil {
+		fmt.Printf("signed token failed %v", err)
+	}
 
 	return accessToken
 }

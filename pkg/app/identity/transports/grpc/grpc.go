@@ -6,6 +6,7 @@ import (
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 
 	"github.com/karta0898098/iam/pkg/app/identity/endpoints"
+	"github.com/karta0898098/iam/pkg/app/identity/entity"
 
 	pb "github.com/karta0898098/iam/pb/identity"
 )
@@ -59,14 +60,24 @@ func MakeGRPCServer(endpoints endpoints.Endpoints) (req pb.IdentityServiceServer
 // decodeGRPCSigninRequest is a transport/grpc.DecodeRequestFunc that converts a
 // gRPC request to a user-domain request. Primarily useful in a server.
 func decodeGRPCSigninRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
-	_ = grpcReq.(*pb.SigninReq)
-	return endpoints.SigninRequest{}, nil
+	req := grpcReq.(*pb.SigninReq)
+
+	return endpoints.SigninRequest{
+		Username:  req.Username,
+		Password:  req.Password,
+		IPAddress: req.IPAddress,
+		Device: entity.Device{
+			Model:     req.Device.Model,
+			Name:      req.Device.Name,
+			OSVersion: req.Device.OSVersion,
+		},
+	}, nil
 }
 
 // encodeGRPCSigninResponse is a transport/grpc.EncodeResponseFunc that converts a
 // user-domain response to a gRPC reply. Primarily useful in a server.
 func encodeGRPCSigninResponse(_ context.Context, grpcReply interface{}) (res interface{}, err error) {
-	reply := grpcReply.(endpoints.SigninResponse)
+	reply := grpcReply.(*endpoints.SigninResponse)
 	return &pb.SigninResp{
 		AccessToken:  reply.AccessToken,
 		RefreshToken: reply.RefreshToken,
@@ -76,15 +87,30 @@ func encodeGRPCSigninResponse(_ context.Context, grpcReply interface{}) (res int
 
 // decodeGRPCTicRequest is a transport/grpc.DecodeRequestFunc that converts a
 // gRPC request to a user-domain request. Primarily useful in a server.
-func decodeGRPCSignupRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
-	_ = grpcReq.(*pb.SignupReq)
-	return endpoints.SignupRequest{}, nil
+func decodeGRPCSignupRequest(ctx context.Context, grpcReq interface{}) (interface{}, error) {
+	req := grpcReq.(*pb.SignupReq)
+
+	return endpoints.SignupRequest{
+		Username:  req.Username,
+		Password:  req.Password,
+		Nickname:  req.Nickname,
+		FirstName: req.FirstName,
+		LastName:  req.LastName,
+		Email:     req.Email,
+		Platform:  req.Platform,
+		IPAddress: req.IPAddress,
+		Device: entity.Device{
+			Model:     req.Device.Model,
+			Name:      req.Device.Name,
+			OSVersion: req.Device.OSVersion,
+		},
+	}, nil
 }
 
 // encodeGRPCTicResponse is a transport/grpc.EncodeResponseFunc that converts a
 // user-domain response to a gRPC reply. Primarily useful in a server.
 func encodeGRPCSignupResponse(_ context.Context, grpcReply interface{}) (res interface{}, err error) {
-	reply := grpcReply.(endpoints.SignupResponse)
+	reply := grpcReply.(*endpoints.SignupResponse)
 	return &pb.SignupResp{
 		AccessToken:  reply.AccessToken,
 		RefreshToken: reply.RefreshToken,

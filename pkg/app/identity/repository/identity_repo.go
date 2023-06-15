@@ -13,17 +13,21 @@ import (
 
 // UserDAO define user information
 type UserDAO struct {
-	ID        string                   // ID unique mock number
-	Username  string                   // Username user login identity account
-	Password  string                   // Password user login identity password
-	Nickname  string                   // Nickname user nickname
-	FirstName string                   // FirstName user first name
-	LastName  string                   // LastName user last name
-	Email     string                   // Email user email address
-	Avatar    string                   // Avatar means user profile picture URL
-	CreatedAt time.Time                // CreatedAt this account create time
-	UpdatedAt time.Time                // UpdatedAt this account update time
-	Status    entity.UserAccountStatus // Status this account is suspend
+	ID        string                   `gorm:"column:id"`         // ID unique mock number
+	Username  string                   `gorm:"column:username"`   // Username user login identity account
+	Password  string                   `gorm:"column:password"`   // Password user login identity password
+	Nickname  string                   `gorm:"column:nickname"`   // Nickname user nickname
+	FirstName string                   `gorm:"column:first_name"` // FirstName user first name
+	LastName  string                   `gorm:"column:last_name"`  // LastName user last name
+	Email     string                   `gorm:"column:email"`      // Email user email address
+	Avatar    string                   `gorm:"column:avatar"`     // Avatar means user profile picture URL
+	CreatedAt int64                    `gorm:"column:created_at"` // CreatedAt this account create time
+	UpdatedAt int64                    `gorm:"column:updated_at"` // UpdatedAt this account update time
+	Status    entity.UserAccountStatus `gorm:"column:status"`     // Status this account is suspend
+}
+
+func (u UserDAO) TableName() string {
+	return "users"
 }
 
 func UnmarshalUserDAO(user *entity.User) *UserDAO {
@@ -36,8 +40,8 @@ func UnmarshalUserDAO(user *entity.User) *UserDAO {
 		LastName:  user.LastName,
 		Email:     user.Email,
 		Avatar:    user.Avatar,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		CreatedAt: user.CreatedAt.UnixMilli(),
+		UpdatedAt: user.UpdatedAt.UnixMilli(),
 		Status:    user.Status,
 	}
 }
@@ -52,9 +56,43 @@ func UnmarshalUser(dao *UserDAO) *entity.User {
 		LastName:  dao.LastName,
 		Email:     dao.Email,
 		Avatar:    dao.Avatar,
-		CreatedAt: dao.CreatedAt,
-		UpdatedAt: dao.UpdatedAt,
+		CreatedAt: time.UnixMilli(dao.CreatedAt),
+		UpdatedAt: time.UnixMilli(dao.UpdatedAt),
 		Status:    dao.Status,
+	}
+}
+
+type SessionDAO struct {
+	ID              string `grom:"column:id"`
+	UserID          string `grom:"column:user_id"`
+	CreatedAt       int64  `grom:"column:created_at"`
+	UpdatedAt       int64  `grom:"column:updated_at"`
+	ExpireAt        int64  `grom:"column:expire_at"`
+	IPAddress       string `grom:"column:ip_address"`
+	IdpProvider     string `grom:"column:idp_provider"`
+	Platform        string `grom:"column:platform"`
+	DeviceModel     string `grom:"column:device_model"`
+	DeviceName      string `grom:"column:device_name"`
+	DeviceOSVersion string `grom:"column:device_os_version"`
+}
+
+func (s SessionDAO) TableName() string {
+	return "sessions"
+}
+
+func UnmarshalSessionDAO(session *entity.Session) *SessionDAO {
+	return &SessionDAO{
+		ID:              session.ID,
+		UserID:          session.UserID,
+		CreatedAt:       session.CreateAt.UnixMilli(),
+		UpdatedAt:       session.UpdateAt.UnixMilli(),
+		ExpireAt:        session.ExpireAt.UnixMilli(),
+		IPAddress:       session.IPAddress,
+		IdpProvider:     session.IdpProvider,
+		Platform:        session.Platform,
+		DeviceModel:     session.Device.Model,
+		DeviceName:      session.Device.Name,
+		DeviceOSVersion: session.Device.OSVersion,
 	}
 }
 
@@ -89,7 +127,7 @@ func (repo *IdentityRepository) FindUserByUsername(ctx context.Context, username
 
 	err = repo.readDB.
 		WithContext(ctx).
-		Model(&user).
+		Model(user).
 		Where("username = ?", username).
 		First(&user).
 		Error
@@ -104,11 +142,12 @@ func (repo *IdentityRepository) FindUserByUsername(ctx context.Context, username
 }
 
 func (repo *IdentityRepository) StoreSession(ctx context.Context, session *entity.Session) (err error) {
+	dao := UnmarshalSessionDAO(session)
 
 	err = repo.writeDB.
 		WithContext(ctx).
-		Model(session).
-		Create(session).
+		Model(dao).
+		Create(dao).
 		Error
 	if err != nil {
 		return errors.Wrapf(errors.ErrInternal, "failed to create session %#v, err %v", session, err)

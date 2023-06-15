@@ -137,10 +137,6 @@ func NewUser(
 	Password string,
 	opts ...NewUserOption,
 ) (*User, error) {
-	// check signup params
-	if len(Username) < UsernameLengthMin || len(Username) > UsernameLengthMax {
-		return nil, errors.Wrap(errors.ErrInvalidInput, "input username length not equal rule")
-	}
 
 	now := time.Now()
 	p := &User{
@@ -183,8 +179,8 @@ func WithNickname(nickname string) NewUserOption {
 // WithEmail validate email format
 func WithEmail(email string) NewUserOption {
 	return func(p *User) error {
-		if len(email) < 3 || len(email) > 254 {
-			return errors.Wrap(errors.ErrInvalidInput, "input email length is invalid")
+		if len(email) < 1 || len(email) > 254 {
+			return errors.Wrapf(errors.ErrInvalidInput, "input email length is invalid email = %v", email)
 		}
 
 		if !emailRegex.MatchString(email) {

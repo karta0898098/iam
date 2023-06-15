@@ -8,6 +8,7 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	translations "github.com/go-playground/validator/v10/translations/en"
+	"github.com/rs/zerolog/log"
 
 	"github.com/karta0898098/iam/pkg/app/identity/entity"
 	"github.com/karta0898098/iam/pkg/app/identity/service"
@@ -122,6 +123,9 @@ func MakeSignupEndpoint(svc service.IdentityService) endpoint.Endpoint {
 		if err != nil {
 			return nil, err
 		}
+
+		logger := log.Ctx(ctx)
+		logger.Info().Interface("resp", identity).Msgf("dump response")
 
 		return &SignupResponse{
 			AccessToken:  identity.NewAccessToken(),

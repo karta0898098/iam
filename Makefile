@@ -24,8 +24,12 @@ DBPASSWORD=ETqdG59zTQ4zTrCV
 DBNAME=iam
 DBHOST=127.0.0.1
 DBPORT=8081
-migrate:
+migrate-up:
 	goose -dir ./deployments/migrate/ -v postgres "user=$(DBUSER) password=$(DBPASSWORD) dbname=$(DBNAME) host=$(DBHOST) port=$(DBPORT) sslmode=disable" up
+
+migrate-down:
+	goose -dir ./deployments/migrate/ -v postgres "user=$(DBUSER) password=$(DBPASSWORD) dbname=$(DBNAME) host=$(DBHOST) port=$(DBPORT) sslmode=disable" down
+
 mocks:
 	mockery --all --with-expecter --dir ./pkg/app/identity --output ./pkg/app/identity/mocks
 
