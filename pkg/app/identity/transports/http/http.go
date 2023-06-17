@@ -34,7 +34,7 @@ func decodeHTTPSigninRequest(ctx context.Context, r *http.Request) (interface{},
 	if err != nil {
 		return nil, errors.Wrap(errors.ErrInvalidInput, "input request is not json")
 	}
-	return req, err
+	return &req, err
 }
 
 // encodeHTTPSigninResponse is a transport/http.EncodeResponseFunc that decodes a
@@ -79,7 +79,7 @@ func decodeHTTPSignupRequest(ctx context.Context, r *http.Request) (interface{},
 	if err != nil {
 		return nil, errors.Wrap(errors.ErrInvalidInput, "input request is not json")
 	}
-	return req, err
+	return &req, err
 }
 
 // encodeHTTPSigninResponse is a transport/http.EncodeResponseFunc that decodes a

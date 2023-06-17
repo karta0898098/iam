@@ -18,3 +18,6 @@ type = "postgres"
 mode = "debug"
 port = ":8080"
 dump = true
+
+[grpc]
+port = ":9090"

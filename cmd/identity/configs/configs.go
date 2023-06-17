@@ -14,6 +14,11 @@ type Configurations struct {
 	Database db.Config      `mapstructure:"database"`
 	HTTP     http.Config    `mapstructure:"http"`
 	Log      logging.Config `mapstructure:"log"`
+	GRPC     GRPC           `mapstructure:"grpc"`
+}
+
+type GRPC struct {
+	Port string `mapstructure:"port"`
 }
 
 // NewConfig read configs and create new instance

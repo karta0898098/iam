@@ -8,6 +8,7 @@ const (
 	SigninKey = "WfAtSGjzzEw8JeL5GZjs99QLzV5bMdxy"
 )
 
+// Session define session
 type Session struct {
 	ID          string
 	UserID      string

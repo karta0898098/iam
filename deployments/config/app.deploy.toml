@@ -17,3 +17,6 @@ type = "postgres"
 [http]
 mode = "release"
 port = ":8080"
+
+[grpc]
+port = ":9090"

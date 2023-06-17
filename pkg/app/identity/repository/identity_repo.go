@@ -26,10 +26,12 @@ type UserDAO struct {
 	Status    entity.UserAccountStatus `gorm:"column:status"`     // Status this account is suspend
 }
 
+// TableName is UserDAO implement table name for gorm
 func (u UserDAO) TableName() string {
 	return "users"
 }
 
+// UnmarshalUserDAO unmarshal entity user to dao
 func UnmarshalUserDAO(user *entity.User) *UserDAO {
 	return &UserDAO{
 		ID:        user.ID,
@@ -46,6 +48,7 @@ func UnmarshalUserDAO(user *entity.User) *UserDAO {
 	}
 }
 
+// UnmarshalUser unmarshal dao to entity user
 func UnmarshalUser(dao *UserDAO) *entity.User {
 	return &entity.User{
 		ID:        dao.ID,
@@ -62,6 +65,7 @@ func UnmarshalUser(dao *UserDAO) *entity.User {
 	}
 }
 
+// SessionDAO define session dao
 type SessionDAO struct {
 	ID              string `grom:"column:id"`
 	UserID          string `grom:"column:user_id"`
@@ -76,10 +80,12 @@ type SessionDAO struct {
 	DeviceOSVersion string `grom:"column:device_os_version"`
 }
 
+// TableName is SessionDAO implement table name for gorm
 func (s SessionDAO) TableName() string {
 	return "sessions"
 }
 
+// UnmarshalSessionDAO unmarshal entity session to dao
 func UnmarshalSessionDAO(session *entity.Session) *SessionDAO {
 	return &SessionDAO{
 		ID:              session.ID,
@@ -96,19 +102,25 @@ func UnmarshalSessionDAO(session *entity.Session) *SessionDAO {
 	}
 }
 
-var _ Repository = &IdentityRepository{}
-
+// Repository define identity repository pattern
 type Repository interface {
+	// StoreUser store user into datastore
 	StoreUser(ctx context.Context, user *entity.User) (err error)
+
+	// FindUserByUsername find user by username
 	FindUserByUsername(ctx context.Context, username string) (profile *entity.User, err error)
+
+	// StoreSession store session into datastore
 	StoreSession(ctx context.Context, session *entity.Session) (err error)
 }
 
+// IdentityRepository implement for Repository
 type IdentityRepository struct {
 	readDB  *gorm.DB
 	writeDB *gorm.DB
 }
 
+// New Repository constructor
 func New(conn db.Connection) Repository {
 	return &IdentityRepository{
 		readDB:  conn.ReadDB(),
@@ -116,6 +128,7 @@ func New(conn db.Connection) Repository {
 	}
 }
 
+// FindUserByUsername is SQL implement
 func (repo *IdentityRepository) FindUserByUsername(ctx context.Context, username string) (profile *entity.User, err error) {
 	var (
 		user UserDAO
@@ -141,6 +154,7 @@ func (repo *IdentityRepository) FindUserByUsername(ctx context.Context, username
 	return UnmarshalUser(&user), nil
 }
 
+// StoreSession is SQL implement
 func (repo *IdentityRepository) StoreSession(ctx context.Context, session *entity.Session) (err error) {
 	dao := UnmarshalSessionDAO(session)
 
@@ -156,6 +170,7 @@ func (repo *IdentityRepository) StoreSession(ctx context.Context, session *entit
 	return nil
 }
 
+// StoreUser is SQL implement
 func (repo *IdentityRepository) StoreUser(ctx context.Context, user *entity.User) (err error) {
 	dao := UnmarshalUserDAO(user)
 

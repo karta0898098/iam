@@ -132,7 +132,7 @@ func (app *Application) startGRPCServer(ctx context.Context, wg *sync.WaitGroup)
 	wg.Add(1)
 	defer wg.Done()
 
-	port := ":9091"
+	port := app.config.GRPC.Port
 	listener, err := net.Listen("tcp", port)
 	if err != nil {
 		app.logger.Panic().Err(err).Msgf("failed to listen on prot=%v", port)
